@@ -21,9 +21,11 @@ pub fn build(b: *std.Build) void {
             },
         }), 
     }); 
-    exe.root_module.addCSourceFile(.{
-        .file = b.path("glad.c"),
+    exe.root_module.addCSourceFiles(.{
+        .files = &[_][]const u8{"src/stb_image.c","glad.c"},
+        .flags = &[_][]const u8{"-g"}
     });
+
     exe.root_module.linkSystemLibrary("glfw",.{});
     exe.root_module.linkSystemLibrary("GL",.{});
     b.installArtifact(exe);
@@ -32,7 +34,7 @@ pub fn build(b: *std.Build) void {
     const run_cmd = b.addRunArtifact(exe);
     run_step.dependOn(&run_cmd.step);
     run_cmd.step.dependOn(b.getInstallStep());
-
+    
     if (b.args) |args| {
         run_cmd.addArgs(args);
     }
